@@ -44,7 +44,7 @@ const Produit = () => {
       })
       .then((response) => {
         // Redirection vers la page de paiement
-        window.location.href = `/paiement/647b26f1a7a2e90b72de7ee9`;
+        window.location.href = `/paiement/${response._id}`;
       })
       .catch((error) => {
         console.error('Erreur lors de la création de la commande:', error);
