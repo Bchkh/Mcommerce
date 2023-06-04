@@ -18,8 +18,8 @@ const Produit = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          // eslint-disable-next-line no-template-curly-in-string
-          const response = await axios.get(`http://localhost:5000/api/produits/${id}`); // Replace with your backend endpoint URL
+          
+          const response = await axios.get(`http://localhost:5000/api/produits/${id}`); 
           setData(response.data);
         } catch (error) {
           console.error(error);
@@ -36,15 +36,15 @@ const Produit = () => {
     const handleOrderSubmit = (event) => {
       event.preventDefault();
 
-      // Envoyer les données de commande à votre backend
+      
       axios.post('http://localhost:5010/api/commandes', {
         'quantite':orderQuantity,
         'idProduit': id,
         'commandePayee':false,
       })
       .then((response) => {
-        // Redirection vers la page de paiement
-        window.location.href = `/paiement/${response._id}`;
+        
+        window.location.href = `/paiement/${response.data.id}`;
       })
       .catch((error) => {
         console.error('Erreur lors de la création de la commande:', error);
@@ -68,7 +68,7 @@ const Produit = () => {
           <p className='p'>{data.titre}</p>
           <p className='p'>{data.description}</p>
           <p className='p'>Prix: {data.prix} DH</p>
-          <form onSubmit={handleOrderSubmit}>
+          <form onSubmit={handleOrderSubmit} className='form'>
         <label>
           Quantity:
           <input

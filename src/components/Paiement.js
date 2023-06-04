@@ -6,17 +6,20 @@ import { useParams } from 'react-router-dom';
 
 const Paiement = () => {
 
-    const { idCommande } = useParams();
+    const { idCommande} = useParams();
     
     const [numeroCarte, setnumeroCarte] = useState(null);
 
-    const [data, setData] = useState(null);
+    const [data, setData] = useState();
+    const [dt, setDt] = useState();
+    
     
     useEffect(() => {
         const fetchData = async () => {
           try {
             // eslint-disable-next-line no-template-curly-in-string
-            const response = await axios.get(`http://localhost:5010/api/commandes/${idCommande}`); // Replace with your backend endpoint URL
+            const response = await axios.get(`http://localhost:5010/api/commandes/${idCommande}`);
+            
             setData(response.data);
           } catch (error) {
             console.error(error);
@@ -25,7 +28,6 @@ const Paiement = () => {
     
         fetchData();
       }, [idCommande]);
-      
 
       const handleOrderQuantityChange = (event) => {
         setnumeroCarte(parseInt(event.target.value));
@@ -37,7 +39,7 @@ const Paiement = () => {
         axios.post('http://localhost:5001/api/paiements', {
           'numeroCarte':numeroCarte,
           'idCommande': idCommande,
-          'montant':240,
+          'montant':data.quantite * dt.prix,
         })
         .then((response) => {
           // Redirection vers la page de paiement
@@ -49,13 +51,28 @@ const Paiement = () => {
         
         
       };
+      const id = data.idProduit;
+      useEffect(()=>{
+        const produitData= async ()=>{
+          try{
+            const res = axios.get(`http://localhost:5000/api/produits/${id}`)
+         setDt(res.data);
+          }
+          catch(error){
+            console.error(error);
+          }
+         }
+         produitData();
+      },[id]);
+      
+
       
       return(
         <div>
-        <div key={data._id} className='item'>
-          <p className='p'>vous avez commander {data.quantite}  du </p>
-          <p className='p'> du Prix:  DH</p>
-          <form onSubmit={handleOrderSubmit}>
+        <div className='item'>
+          <p className='p'>vous avez commander {data.quantite} du {dt.titre}</p>
+          <p className='p'> du Prix: {data.quantite * dt.prix} DH</p>
+          <form onSubmit={handleOrderSubmit} className='form'>
         <label>
           Numero de Carte:
           <input
